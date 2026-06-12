@@ -1,0 +1,10 @@
+001;Retoque de Batom;Banda G10;2021;Single;Original;001
+002;Lágrimas Sobre a Mesa;Banda Karisma;2017;Single;Original;002
+003;Um Pedido;Hungria;2020;Single;Original;003
+004;Seu Polícia;Zé Neto e Cristiano;2015;Ao Vivo Em São José do Rio Preto;Original;004
+005;Estrada da Vida;Milionário & José Rico;1977;Estrada Da Vida (Vol.5);Original;005
+006;Lágrimas Sobre a Mesa;Doce Pecado;2024;Single;Cover;002
+007;Meu Amigo Radialista;Banda San Marino;2018;Single;Original;007
+008;Balada;Gusttavo Lima;2011;Single;Original;008
+009;Balada Boa;Marue Martins;2012;Single;Cover;008
+010;Sem Você;Zezé Di Camargo & Luciano;2000;Single;Original;010

@@ -1,0 +1,10 @@
+001;Evidências;Chitãozinho & Xororó;1990;Cowboy do Asfalto;Original;001
+002;Boate Azul;Joaquim & Manuel;1963;Single;Original;002
+003;Infiel;Marília Mendonça;2016;Marília Mendonça Ao Vivo;Original;003
+004;Liberdade Provisória;Henrique & Juliano;2020;Manifesto Musical;Original;004
+005;Fio de Cabelo;Chitãozinho & Xororó;1982;Somos Apaixonados;Original;005
+006;Infiel;Banda Passarela;2018;Single;Cover;003
+007;Telefone Mudo;Trio Parada Dura;1981;As Andorinhas;Original;007
+008;Notificação Preferida;Zé Neto & Cristiano;2018;Esquece o Mundo Lá Fora;Original;008
+009;Notificação Preferida;Banda Mercosul;2019;Single;Cover;008
+010;Apelido Carinhoso;Gusttavo Lima;2017;Buteco do Gusttavo Lima 2;Original;010
