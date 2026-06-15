@@ -32,18 +32,24 @@
     independentemente do estilo/gênero ou armazenamento.
 
 */
+
+// INCLUSÃO DE TODAS AS BIBLIOTECAS NECESSÁRIAS.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
 
+// DEFININDO TMBUF E TMNOME, PARA ESTABELECER UM PADRÃO DE TAMANHO.
 #define TMBUF 256
 #define TMNOME 128
 
+// CRIANDO DUAS VARIÁVEIS GLOBAIS PARA PERCORRER EM DIVERSAS FUNÇÕES, 'nomArq' RESPONSÁVEL POR GUARDAR O ARQUIVO .TXT JÁ
+// O ARQUIVO nomPlaylist VAI SER O ARQUIVO CLONADO PARA MODIFICAÇÃO DA PLAYLIST.
 char nomArq[TMNOME] = "Nenhum";
 char nomPlaylist[TMNOME] = "Nenhum";
 
+// LIMPA BUFFER PADRÃO.
 void lbt() {
 
     char c;
@@ -52,12 +58,14 @@ void lbt() {
 
 }
 
+// ESSA FUNÇÃO VAI REGISTRAR O ARQUIVO QUE O USUÁRIO QUER ACESSAR.
 void definirArq() {
 
     printf("Digite o nome do arquivo (ex: dados.txt): ");
 
-    scanf(" %127[^\n]", nomArq); // Aceita qualquer char exceto '\n', max 127
+    scanf(" %127[^\n]", nomArq);
 
+    // FUNÇÃO STRLEN VAI CONTAR TODAS A LETRAS DO NOME DO ARQUIVO, NO CASO 'nomArq'.
     if (strlen(nomArq) == 0) {
 
         printf("Nome inválido! Usando 'arquivo.txt' como padrão.\n");
@@ -69,6 +77,7 @@ void definirArq() {
 
 }
 
+// ESSA É UMA FUNÇÃO ESPECÍFICA, POIS GRAVA UMA LINHA QUE O USUÁRIO DIGITAR NA ÚLTIMA POSIÇÃO DO ARQUIVO .TXT.
 void gravarLinha() {
 
     if (strlen(nomArq) == 0) {
@@ -79,6 +88,11 @@ void gravarLinha() {
 
     }
 
+    // A FUNÇÃO FILE FAZ COM QUE O PROGRAMA ENTENDE QUE É UM ARQUIVO A SER ABERTO, FOPEN(nomArq, "a") ABRE O ARQUIVO nomArq, 
+    // E A LETRA "a" SIGNIFICA APPEND NA QUAL INSERE O TEXTO NA ÚLTIMA POSIÇÃO.
+    // "a" APPEND, INSERE NA ÚLTIMA POSIÇÃO DO .TXT.
+    // "w" WRITE, SE EXISTIR O ARQUIVO ELE APAGA E CRIA UM NOVO.
+    // "r" READ, SOMENTE LEITURA DO ARQUIVO .TXT.
     FILE *fp = fopen(nomArq, "a");
 
     if (fp == NULL) {
@@ -92,16 +106,20 @@ void gravarLinha() {
 
     printf("Digite o texto a gravar: ");
 
-    scanf(" %255[^\n]", txt); // Aceita qualquer char exceto '\n', max 255
+    // Aceita qualquer char exceto '\n', max 255
+    scanf(" %255[^\n]", txt); 
 
+    // VAI GRAVAR O TEXTO QUE FOI ESCRITO "txt" NO ARQUIVO "fp".
     fprintf(fp, "%s\n", txt);
 
     printf("Linha gravada com sucesso em '%s'!\n\n", nomArq);
 
+    // FECHA O ARQUIVO QUE FOI ABERTO LÁ EM CIMA.
     fclose(fp);
 
 }
 
+// VAI ABRIR O ARQUIVO DEFINIDO E MOSTRAR PARA O USUÁRIO.
 void lerArq() {
 
     if (strlen(nomArq) == 0) {
@@ -125,6 +143,7 @@ void lerArq() {
 
     int lin = 1;
 
+    // VAI IMPRIMIR TODO O CONTEÚDO DO ARQUIVO.
     printf("\n----------------------- Conteúdo de '%s' -----------------------\n", nomArq);
 
     while (fscanf(fp, " %255[^\n]", buf) == 1) {
@@ -139,6 +158,8 @@ void lerArq() {
 
 }
 
+// COMO NO ENUNCIADO FOI SOLICITADO A UTILIZAÇÃO DE LISTA SIMPLES, FOI CRIADO UMA ESTRUTURA DE DADOS CONTENDO A POSIÇÃO,
+// A LINHA A SER ESCRITA E O PRÓXIMO NÓ, NO CASO A PRÓXIMA MÚSICA.
 struct No {
 
     int pos;
@@ -148,12 +169,18 @@ struct No {
 
 };
 
+// PODEMOS SE DEFINIR COMO A RAIZ DA "Playlist", SE PERDER ESSE PRIMEIRO NÓ, NÃO TERÁ ACESSO NAS PRÓXIMAS MÚSICAS.
 No *ListaUniversal = NULL;
 
+// APARTIR DESSE PONTO COMEÇAREMOS A MANIPULAÇÃO DA LISTA.
+
+// AO SER ACIONADA PELO USUÁRIO, VAI SOLICITAR O MÚSICA E A POSIÇÃO QUE DESEJA INSERIR NA PLAYLIST.
 void InserirMusica() {
 
+    // DECLARANDO A ESTRUTURA RAIZ.
     No *MostrarLista = ListaUniversal;
 
+    // MOSTRA A LISTA COMPLETA.
     while (MostrarLista != NULL) {
 
         printf("[Posição: %d] %s", MostrarLista->pos, MostrarLista->Linha);
@@ -162,6 +189,7 @@ void InserirMusica() {
 
     }
 
+    // LIBERA A ESTRUTURA PARA DESOCUPAR MEMÓRIA DO SISTEMA.
     free(MostrarLista);
     MostrarLista = NULL;
 
@@ -171,6 +199,7 @@ void InserirMusica() {
 
     printf("\n\nInforme os dados que deseja inserir em sua Playlist.\nObs: Deve conter os seguintes atributos [ ID Música, Título, Artista/Banda, Ano de lançamento, Álbum, Tipo da versão e ID da Música Original].\nEx : (001;Retoque de Batom;Banda G10;2021;Single;Original;001).\n\n");
     scanf(" %255[^\n]", NovaMusica->Linha);
+    // ADICIONA UMA QUEBRA DE LINHA NO FINAL DA MÚSICA INSERIDA.
     strcat(NovaMusica->Linha, "\n");
 
     FILE *Append = fopen(nomPlaylist, "a");
@@ -182,6 +211,7 @@ void InserirMusica() {
 
     }
 
+    // GRAVA A MÚSICA NA ÚLTIMA POSIÇÃO DO ARQUIVO .TXT.
     fprintf(Append, "%s\n", NovaMusica->Linha);
 
     printf("Linha gravada com sucesso em '%s'!\n\n", nomPlaylist);
@@ -193,8 +223,12 @@ void InserirMusica() {
 
     NovaMusica->ProxNo = NULL;
 
+    // UTILIZA DA RAIZ PARA ACESSAR A PLAYLIST.
     No *Aux1 = ListaUniversal;
 
+    // SE O USUÁRIO QUER INSERIR NA PRIMEIRA POSIÇÃO.
+
+    // PODEMOS RE-FORMULAR PARA, if (NovaMusica->pos == 1).
     if (NovaMusica->pos == Aux1->pos) {    
 
         NovaMusica->ProxNo = Aux1;
@@ -206,6 +240,7 @@ void InserirMusica() {
 
         }
 
+        // DEFINE COMO O A RAIZ DA PLAYLIST A NOVA MÚSICA.
         ListaUniversal = NovaMusica;
               
     }
@@ -214,6 +249,7 @@ void InserirMusica() {
 
         Aux1 = ListaUniversal;
 
+        // VAI CRIAR UM NÓ COM A ÚLTIMA POSIÇÃO DA PLAYLIST.
         while(Aux1->ProxNo != NULL) {
 
             if(Aux1->ProxNo != NULL) {
@@ -224,8 +260,7 @@ void InserirMusica() {
 
         }
 
-        //Aux1 ficou com a última posição da lista.
-
+        // SE O USUÁRIO DIGITOU A ÚLTIMA POSIÇÃO OU MAIOR, É INSERIDO NA ÚLTIMA POSIÇÃO DA PLAYLIST.
         if (NovaMusica->pos > Aux1->pos) {
 
             int pos = Aux1->pos;
@@ -240,6 +275,8 @@ void InserirMusica() {
 
         } 
 
+        // SE A POSIÇÃO FICAR ENTRE O PRIMEIRO E O ÚLTIMA DA PLAYLIST, VAI UTILIZAR ESSE FORMATO PARA MANIPULAR A PLAYLIST.
+        // LEMBRANDO QUE A UTILIZAÇÃO DE DOIS AUXILIAR É DESNECESSÁRIO, SOMENTE UM JÁ FAZIA A FUNÇÃO.
         else {
 
             Aux1 = ListaUniversal;
@@ -262,8 +299,9 @@ void InserirMusica() {
 
         }        
 
-    }//Fim do Else.
+    }
 
+    // VAI RE-FORMULAR AS POSIÇÕES DAS MÚSICAS DA PLAYLIST.
     int i = 1;
 
     No *Aux = ListaUniversal;
@@ -290,7 +328,7 @@ void InserirMusica() {
 
     while(Aux != NULL);
     
-
+    //DEFINIDO COMO PADRÃO, ESPERA 7 SEGUNDOS PARA LEITURA E LIMPA O SISTEMA.
     sleep(7);
 
     system("Clear");
@@ -300,14 +338,17 @@ void InserirMusica() {
 
     }
 
+// AO SER ACIONADO O USUÁRIO TEM O PODER DE EXCLUIR A MÚSICA DA PLAYLIST.
 void RemoverMusica() {
 
+    // SE NÃO EXISTIR CONTEÚDO NA PLAYLIST.
     if (ListaUniversal == NULL) {
 
         printf("Playlist vazia!\n");
 
     }
 
+    //DEFINIDO A RAIZ PARA A EXIBIÇÃO DO CONTEÚDO DA PLAYLIST.
     No *InicioFila = ListaUniversal;
 
     printf("\n----------------------- Conteúdo de '%s' -----------------------\n", nomPlaylist);
@@ -327,6 +368,7 @@ void RemoverMusica() {
     printf("Informe a posição que deseja remover a música.\n");
     scanf("%d", &pos);
 
+    // SE INFORMAR UMA POSIÇÃO MENOR QUE O PERMITIDO.
     if (pos <= 0) {
 
         printf("Posição inválida!\n");
@@ -334,6 +376,7 @@ void RemoverMusica() {
 
     }
 
+    // SE INFORMAR A POSIÇÃO IGUAL A UM.
     if (pos == 1) {
 
         No *remover = ListaUniversal;
@@ -342,21 +385,33 @@ void RemoverMusica() {
 
         free(remover);
 
-    } else {
+    } 
+    
+    // AQUI MUDAMOS A FORMA DE LOCALIZAR O NÓ ANTERIOR.
+    else {
 
         No *anterior = ListaUniversal;
 
+        // USANDO UM LAÇO DE REPETIÇÃO PARA LOCALIZAR O NÓ ANTERIOR DO NÓ QUE O USUÁRIO DESEJA REMOVER.
         while (anterior != NULL && anterior->pos != pos - 1) {
 
             anterior = anterior->ProxNo;
 
         }
 
+        // SE O NÓ ANTERIOR FOR IGUAL A NULO OU O NÓ ANTERIOR->PRÓXIMO NÓ FOR IGUAL A NULO.
         if (anterior == NULL || anterior->ProxNo == NULL) {
 
             printf("Posição inválida!\n");
 
         }
+
+        // UMA PARTE INTERESSANTE, CRIA UM NÓ QUE RECEBE O NOÓ DA MÚSICA A SER EXCLUIDA , LOGO EM SEGUIDA LIGA O 
+        // NÓ ANTES DO NÓ A SER EXCLUIDO PARA O PRÓXIMO NÓ A SER EXCLUIDO.
+
+        // NÓ1 -------> NÓ3
+
+        //       NÓ2 --- NÓ EXCLUÍDO.
 
         No *remover = anterior->ProxNo;
 
@@ -400,6 +455,7 @@ void RemoverMusica() {
 
 }
 
+// MOVE A MÚSICA ESCOLHIDA PARA A POSIÇÃO DESEJADA.
 void MoverMusica() {
 
     if (ListaUniversal == NULL) {
@@ -458,6 +514,7 @@ void MoverMusica() {
 
             }
 
+            // MUSICAARMAZENDA FICA GUARDADO A MÚSICA QUE O USUÁRIO ESCOLHEU PARA MUDAR DE POSIÇÃO.
             MusicaArmazenada = MusicaAnterior->ProxNo;
 
             MusicaAnterior->ProxNo = MusicaArmazenada->ProxNo;
@@ -498,6 +555,7 @@ void MoverMusica() {
 
         pos = 1000;
 
+        // AQUI O USUÁRIO VAI DEFINIR A POSIÇÃO PARA COLOCAR A MÚSICA NA PLAYLIST.
         printf("\n\nInforme a POSIÇÃO para inserir a música.\n");
         scanf("%d", &pos);
 
@@ -525,8 +583,10 @@ void MoverMusica() {
 
             }
             
+            // MUSICAARMAZENADA ------> NO2
             MusicaArmazenada->ProxNo = MusicaAnterior->ProxNo;
 
+            // NO1 ------> MUSICAARMAZENDA ------> NO2
             MusicaAnterior->ProxNo = MusicaArmazenada;
 
         }
@@ -569,6 +629,7 @@ void MoverMusica() {
 
 }
 
+// AQUI O USUÁRIO PODE LOCALIZAR QUANTAS VEZES A BANDA OU ARTISTA APARECE NA PLAYLIST.
 void BuscarArtista() {
 
     if (ListaUniversal == NULL) {
@@ -601,7 +662,8 @@ void BuscarArtista() {
 
         char *artista = strtok(NULL, ";"); //Fica armazenado o artista/ Banda.
 
-        if (artista != NULL && strcmp(artista, artistaBusca) == 0) {
+        //VERIFICA SE O ARTISTA DA LINHA É O MESMO QUE O USUÁRIO PROCURA, SE FOR, CONTABILIZA NO CONTADOR.
+        if (artista != NULL && strcasecmp(artista, artistaBusca) == 0) {
 
             printf("Posição [%d] %s", Aux->pos, Aux->Linha);
 
@@ -613,6 +675,7 @@ void BuscarArtista() {
 
     }
 
+    // SE NÃO ENCONTRAR EM NENHUMA POSIÇÃO, ELE AVISA.
     if (!encontrou) {
 
         printf("Nenhuma música encontrada para '%s'.\n", artistaBusca);
@@ -625,8 +688,10 @@ void BuscarArtista() {
 
 }
 
+// VAI EMBARALHAR TODA A PLAYLIST DE FORMA DEFINITIVA.
 void EmbaralharPlaylist() {
 
+    // SE NÃO EXISTIR MÚSICAS OU SOMENTE UMA MÚSICA, OCORRE ERRO.
     if (ListaUniversal == NULL || ListaUniversal->ProxNo == NULL) {
 
         printf("Não há músicas suficientes para embaralhar.\n");
@@ -638,6 +703,7 @@ void EmbaralharPlaylist() {
 
     No *Aux = ListaUniversal;
 
+    // CONTABILIZA TODAS AS MÚSICAS.
     while (Aux != NULL) {
 
         tamanho++;
@@ -646,14 +712,18 @@ void EmbaralharPlaylist() {
 
     }
 
+    // GERA NÚMEROS DE FORMA ALEATÓRIA TODA VEZ QUE FOR INICIADO.
     srand(time(NULL));
 
+    // RECURSIVIDADE ATÉ QUE I ALCANCE 2 VEZES O TAMANHO.
     for (int i = 0; i < tamanho * 2; i++) {
 
+        // P1 E P2 VAI SER ATRIBUIDO UM VALOR ENTRE UM E O TAMANHO.
         int p1 = rand() % tamanho + 1;
 
         int p2 = rand() % tamanho + 1;
 
+        // SE ACASO CAIR OS DOIS NA MESMA POSIÇÃO, PULA PARA O PRÓXIMO REPETIÇÃO DO LAÇO.
         if (p1 == p2)
 
             continue;
@@ -662,23 +732,25 @@ void EmbaralharPlaylist() {
 
         No *N2 = ListaUniversal;
 
+        // ENCONTRA NA PLAYLIST A POSIÇÃO P1.
         while (N1 != NULL && N1->pos != p1) {
 
             N1 = N1->ProxNo;
 
         }
 
+        // ENCONTRA NA PLAYLIST A POSIÇÃO P2.
         while (N2 != NULL && N2->pos != p2) {
 
             N2 = N2->ProxNo;
 
         }
 
+        // AQUI VAI COLOCAR A LINHA DO P1 NA P2 E P2 NA LINHA DO P1.
         if (N1 != NULL && N2 != NULL) {
 
             char linhaTemp[256];
             strcpy(linhaTemp, N1->Linha);
-
             strcpy(N1->Linha, N2->Linha);
             strcpy(N2->Linha, linhaTemp);
 
@@ -704,6 +776,7 @@ void EmbaralharPlaylist() {
 
 }
 
+// AQUI OCORRE A ORGANIZAÇÃO DE FORMA ALFABÉTICA.
 void OrdenarAlfabeticamente() {
 
     if (ListaUniversal == NULL || ListaUniversal->ProxNo == NULL) {
@@ -721,35 +794,48 @@ void OrdenarAlfabeticamente() {
 
         No *Atual = ListaUniversal;
 
+        // PRECORRE TODO OS NÓ ATÉ O PRÓXIMO NÓ SER NULO.
         while (Atual->ProxNo != NULL) {
 
+            // ARMAZENA AS LINHAS.
             char Linha1[256];
 
             char Linha2[256];
 
+            // COPIA NA LINHA1 A LINHA ATUAL.
             strcpy(Linha1, Atual->Linha);
 
+            // COPIA NA LINHA2 O PRÓXIMO NÓ DA LINHA ATUAL.
             strcpy(Linha2, Atual->ProxNo->Linha);
 
+            // VAI IGNORAR O ID.
             strtok(Linha1, ";");
 
+            // VAI USAR SOMENTE O TÍTULO DA MÚSICA.
             char *Titulo1 = strtok(NULL, ";");
 
             strtok(Linha2, ";");
 
             char *Titulo2 = strtok(NULL, ";");
 
+            // A FUNÇÃO STRCMP VAI COMPARA DE FORMA ALFABÉTICA AS DUAS STRINGS.
             if (Titulo1 != NULL && Titulo2 != NULL && strcmp(Titulo1, Titulo2) > 0) {
 
+                // LINHA PARA ARMAZENAMENTO.
                 char Temp[256];
 
+                // COPIA A LINHA ATUAL NO CASO A LINHA QUE POSSUI O A LETRA INICIAL DEPOIS DA LINHA 2, EX: ZORRO --> LINHA ATUAL, ABACAXI --> LINHA2. 
                 strcpy(Temp, Atual->Linha);
 
+                // A LINHA ATUAL RECEBE LINHA2.
                 strcpy(Atual->Linha, Atual->ProxNo->Linha);
 
+                // LINHA2 RECEBE A LINHA ATUAL --> ZORRO.
                 strcpy(Atual->ProxNo->Linha, Temp);
 
+                // COMUM EM BUUBLE SORT PARA SABER SE ESTÁ ORDENADA OU NÃO.
                 trocou = 1;
+
             }
 
             Atual = Atual->ProxNo;
@@ -778,8 +864,10 @@ void OrdenarAlfabeticamente() {
 
 }
 
+// AQUI É CRIADO A BASE DA PLAYLIST, AONDE É COPIADO DA LISTA ORIGINAL PARA UTILIZAR DE MANIPULAÇÃO.
 void criarPlaylist() {
 
+    // ABRE O ARQUIVO PARA LEITURA.
     FILE *Original = fopen(nomArq, "r");
 
     lbt();
@@ -797,6 +885,7 @@ void criarPlaylist() {
 
     }
 
+    // COPIA TODA O ARQUIVO .TXT PARA O NOVO.
     while (fgets(Linha, sizeof(Linha),Original) != NULL) {
 
         fputs(Linha,Copia);
@@ -807,8 +896,10 @@ void criarPlaylist() {
 
     fclose(Original);
 
+    // ABRE O ARQUIVO COPIADO.
     FILE *CopiaPlaylist = fopen(nomPlaylist, "r");
 
+    // CRIA A "RAIZ".
     No *Inicio = ListaUniversal;
 
     No *Fim = NULL;
@@ -817,16 +908,25 @@ void criarPlaylist() {
 
     int pos = 1;
 
+    // VAI GRAVAR CADA LINHA DA CÓPIA EM UMA ESTRUTURA.
     while(fgets(buf, sizeof(buf), CopiaPlaylist) != NULL) {
 
+        // DEFINE A ESTRUTURA PARA MANIPULAÇÃO.
         No *GravarLinha = (No*)malloc(sizeof(No));
 
-        strcpy(GravarLinha->Linha, buf);
+        // JÁ DEFINE O PRÓXIMO NÓ COMO NULO PARA EVITA LIXO DE MEMÓRIA.
+        GravarLinha->ProxNo = NULL;
 
+        //GRAVA LINHA.
+        strcpy(GravarLinha->Linha, buf);
+    
+        // GRAVA A POSIÇÃO.
         GravarLinha->pos = pos;
 
+        // AUMENTA A POSIÇÃO.
         pos++;
 
+        // SE FOR O PRIMERO DA LISTA.
         if(Inicio == NULL) {
                         
             Inicio = GravarLinha;
@@ -835,16 +935,20 @@ void criarPlaylist() {
 
         }
 
+        // SE NÃO FOR O PRIMEIRO DA LISTA.
         else {
 
+            // O PRÓXIMO NÓ DO FIM RECEBE O NÓ QUE FOI GRAVADO.
             Fim->ProxNo = GravarLinha;
 
+            // O FIM RECEBE O NOVO NÓ GRAVADO.
             Fim = GravarLinha;
 
         }
                     
     }
 
+    // A RAIZ RECEBE O PRIMEIRO DA LISTA/PLAYLIST CRIADA.
     ListaUniversal = Inicio;
 
     fclose(CopiaPlaylist);
@@ -853,8 +957,10 @@ void criarPlaylist() {
 
     int op = 100;
 
+    // AGORA O USUÁRIO EM SUA TELA DEVERÁ ESCOLHER OQUE FAZER COM SUA PLAYLIST.
     while (op != 7) {
 
+        // MOSTRA PARA O USUÁRIO AS MÚSICAS.
         No *MostrarPlaylist = ListaUniversal;
 
         printf("\n----------------------- Conteúdo de '%s' -----------------------\n\n", nomPlaylist);
@@ -867,7 +973,7 @@ void criarPlaylist() {
 
         }
         
-
+        // OPÇÕES DISPONÍVEIS.
         printf("\n\n**** PLAYLIST '%s'****\n\n", nomPlaylist);
         printf("< 1 > Inserir Música\n");
         printf("< 2 > Remover Música\n");
@@ -877,6 +983,7 @@ void criarPlaylist() {
         printf("< 6 > Ordenar Músicas\n");
         printf("< 7 > Sair\n");
 
+        // OPÇÃO ESCOLHIDA PELO USUÁRIO.
         scanf("%d", &op);
 
 
@@ -884,6 +991,7 @@ void criarPlaylist() {
 
             case 1: {
 
+                // LIMPA A TELA E CHAMA A FUNÇÃO.
                 system("Clear");
 
                 InserirMusica();
@@ -954,6 +1062,8 @@ void criarPlaylist() {
 
 }
 
+// MENU PRINCIPAL, ESCOLHE O ARQUIVO PRÉ DEFINIDO NO CASO MUSICAS1 E MUSICAS2, GRAVAR LINHA NO ARQUIVO ORIGINAL, 
+// LER O CONTEÚDO ORIGINAL, CRIAR A PLAYLIST COMO CÓPIA E SAIR DO APLICATIVO DE MÚSICA.
 int main() {
 
     int op;

@@ -8,3 +8,8 @@
 008;Notificação Preferida;Zé Neto & Cristiano;2018;Esquece o Mundo Lá Fora;Original;008
 009;Notificação Preferida;Banda Mercosul;2019;Single;Cover;008
 010;Apelido Carinhoso;Gusttavo Lima;2017;Buteco do Gusttavo Lima 2;Original;010
+011;Lua E A Noite;Brilha Som;2018;Single;Original;011
+012;Amiga Ponto Com;Banda Passarela;2007;Single;Original;012
+013;Dormi Na Praça;Bruno E Marrone;2010;Single;Original;013
+014;Jesus Apaga A Luz;Henrique E Juliano;Single;Original;014
+015;Tá Namorando e Me Querendo;Henrique E Juliano;2013;Single;Original;015
